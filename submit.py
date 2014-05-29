@@ -6,22 +6,12 @@ import traceback
 
 # --- UTILS ---
 def awesomeness_file_append(fname, content):
-    # pos: Beginning of line after line that contains INSERT AWESOMENESS HERE
-    pos = None
-
     with open(fname, 'r+') as f:
-        for line in iter(f.readline, ''):
-            if "-- INSERT AWESOMENESS HERE --" in line:
-                while 1:
-                    c = f.read(1)
-                    if c == '' or c == '\n':
-                        pos = f.tell()
-                        break
-                break
+        old_content = f.read()
 
-    with open(fname, 'r+') as f:
-        f.seek(pos)
-        f.write(content)
+    with open(fname, 'w') as f:
+        f.write(old_content.replace("<!-- INSERT AWESOMENESS HERE -->",
+                                    "<!-- INSERT AWESOMENESS HERE -->\n" + content))
 
 
 def read_body(environ):
