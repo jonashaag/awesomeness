@@ -1,12 +1,28 @@
 import urllib.parse
 import urllib.request
 import lxml.html
+import traceback
 
 
 # --- UTILS ---
-def file_append(fname, c):
-    with open(fname, 'a') as f:
-        f.write(c)
+def awesomeness_file_append(fname, content):
+    # pos: Beginning of line after line that contains INSERT AWESOMENESS HERE
+    pos = None
+
+    with open(fname, 'r+') as f:
+        for line in iter(f.readline, ''):
+            if "-- INSERT AWESOMENESS HERE --" in line:
+                while 1:
+                    c = f.read(1)
+                    if c == '' or c == '\n':
+                        pos = f.tell()
+                        break
+                break
+
+    with open(fname, 'r+') as f:
+        f.seek(pos)
+        f.write(content)
+
 
 def read_body(environ):
     return environ['wsgi.input'].read(int(environ['CONTENT_LENGTH'])).decode('utf-8')
@@ -31,6 +47,7 @@ def handle_title(environ, start_response):
     try:
         title = lxml.html.parse(urllib.request.urlopen(url)).find(".//title").text.encode('utf-8')
     except:
+        traceback.print_exc()
         title = b""
     start_response("200 bittesehr", [("Content-Length", str(len(title))),
                                      ("Content-Type", "text/plain; charset=utf-8")])
@@ -40,7 +57,7 @@ def handle_title(environ, start_response):
 def handle_submit(environ, start_response):
     post = get_post(environ)
     post['maybeAWESOME'] = "AWESOME!" if post.pop("awesome", '') == 'on' else ""
-    file_append("awesomeness.html",
+    awesomeness_file_append("awesomeness.html",
 """
   <li>
     <span class=date>{date}</span>
