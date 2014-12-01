@@ -12,7 +12,6 @@
   <div><label for=title>Title</label><input id=title name=title></div>
   <div><input id=awesome name=awesome type=checkbox><label for=awesome>AWESOME!</label></div>
 
-  <input type=hidden id=date name=date>
   <input type=submit id=submit>
 </form>
 
@@ -27,8 +26,6 @@
     httpRequest.open("POST", "title/", true);
     httpRequest.send(url);
   }
-
-  document.getElementById("date").value = (new Date()).toLocaleFormat("%h %d, %Y");
 
   document.getElementById("url").onblur = function() {
     if(!this.value || document.getElementById("title").value) return;

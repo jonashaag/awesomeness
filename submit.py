@@ -1,3 +1,4 @@
+import datetime
 import urllib.parse
 import urllib.request
 import lxml.html
@@ -46,15 +47,20 @@ def handle_title(environ, start_response):
 
 def handle_submit(environ, start_response):
     post = get_post(environ)
-    post['maybeAWESOME'] = "AWESOME!" if post.pop("awesome", '') == 'on' else ""
     awesomeness_file_append("awesomeness.html",
 """
   <li>
     <span class=date>{date}</span>
     <span class=url><a href="{url}">{title}</a></span>
-    <span class=awesome>{maybeAWESOME}</span>
+    <span class=awesome>{maybeAwesome}</span>
   </li>
-""".format(**post))
+""".format(
+        maybeAwesome=("AWESOME!" if post.pop("awesome", '') == 'on' else ""),
+        date=datetime.datetime.now().strftime("%h %d, %Y"),
+        url=post["url"],
+        title=post["title"]
+    ))
+
     start_response("302 hier geht's weiter", [("Location", "..")])
     return []
 
